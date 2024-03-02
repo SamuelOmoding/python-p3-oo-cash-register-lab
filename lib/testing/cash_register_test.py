@@ -69,8 +69,12 @@ class TestCashRegister:
         self.cash_register_with_discount.add_item("macbook air", 1000)
         self.cash_register_with_discount.apply_discount()
         sys.stdout = sys.__stdout__
-        assert(captured_out.getvalue() == "After the discount, the total comes to $800.\n")
         self.reset_register_totals()
+        register = CashRegister(discount=20)
+        register.add_item("apple", 120)
+        register.apply_discount() 
+        assert captured_out.getvalue() == "After the discount, the total comes to $800.\n"
+
 
     def test_apply_discount_reduces_total(self):
         '''reduces the total'''
@@ -117,3 +121,30 @@ class TestCashRegister:
       assert(self.cash_register.total == 0.0)
       self.reset_register_totals()
       
+    def test_cash_register():
+        
+      register = CashRegister(discount=20)
+      register.add_item("apple", 1.2)
+      register.add_item("apple", 120)
+      register.add_item("banana", 2.4)
+      register.add_item("orange", 3.6)
+      register.apply_discount()
+      assert register.total == 8.0
+      assert register.total == 800
+
+        # Subtract the last item
+      register.void_last_transaction()
+      assert register.total == 6.4
+
+        # Subtract the last item again
+      register.void_last_transaction()
+      assert register.total == 1.2        
+      assert register.total == 120
+
+
+        # Remove all items
+      register.void_last_transaction()
+      assert register.get_total() == 0.0
+      assert register.get_total() == 0
+      assert register.get_items() == []
+
